@@ -5,7 +5,7 @@ import "strconv"
 // Convert takes a number and returns a string that
 // depends on the factors the number.
 func Convert(num int) string {
-	ret := ""
+	var ret string
 	if num%3 == 0 {
 		ret += "Pling"
 	}
