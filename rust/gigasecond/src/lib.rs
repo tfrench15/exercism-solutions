@@ -4,7 +4,7 @@ use chrono::{DateTime, Utc};
 pub fn after(start: DateTime<Utc>) -> DateTime<Utc> {
     let gig = chrono::Duration::seconds(1000000000);
 
-    let new_time = start.checked_add_signed(gig);
+    let new_time = start.checked_add_signed(gig).unwrap();
 
     return new_time;
 }
