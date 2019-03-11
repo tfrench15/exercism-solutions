@@ -96,18 +96,13 @@ func isRootNode(record Record) (bool, error) {
 	return false, nil
 }
 
-func mergeNodes(parent *Node, records []Record) *Node {
-	count := len(records)
+func insertNode(parent *Node, records []Record) *Node {
 	for _, record := range records {
 		if record.Parent == parent.ID {
 			node := buildNodeFromRecord(record)
 			parent.Children = append(parent.Children, node.Children...)
 			count--
 		}
-	}
-
-	if count == 0 {
-		return parent
 	}
 	return parent
 }
