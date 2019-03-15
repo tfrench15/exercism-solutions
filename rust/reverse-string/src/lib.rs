@@ -3,6 +3,6 @@ pub fn reverse(input: &str) -> String {
     for c in input.chars().rev() {
         reversed.push(c);
     }
-
-    return reversed;
+    
+    return reversed
 }
