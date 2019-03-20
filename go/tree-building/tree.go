@@ -64,6 +64,7 @@ func Build(records []Record) (*Node, error) {
 	for _, record := range records {
 		insertNode(root, record)
 	}
+
 }
 
 // findRoot returns the location of the root node in the slice
