@@ -52,14 +52,18 @@ func Build(records []Record) (*Node, error) {
 		}, nil
 	}
 
-	tree := new(Tree)
-	idx, err := findRoot(records)
+	rootIdx, err := findRoot(records)
 	if err != nil {
 		return nil, err
 	}
-	records = append(records[:idx], records[idx:]...)
-	// TODO: finish...
-	return tree.root, nil
+	rootRec := records[rootIdx]
+	root := &Node{ID: rootRec.ID}
+
+	parents := []int{0}
+	records = append(records[:rootIdx], records[rootIdx:]...)
+	for _, record := range records {
+		insertNode(root, record)
+	}
 }
 
 // findRoot returns the location of the root node in the slice
@@ -78,35 +82,46 @@ func findRoot(records []Record) (int, error) {
 		}
 	}
 	if count < 1 {
-		return -1, fmt.Errorf("no root node found", nil)
+		return -1, fmt.Errorf("no root node found")
 	}
 	if count > 1 {
-		return -1, fmt.Errorf("duplicate root nodes found", nil)
+		return -1, fmt.Errorf("duplicate root nodes found")
 	}
 	return index, nil
 }
 
+// isRootNode determines whether a given record is a valid root node.
 func isRootNode(record Record) (bool, error) {
 	if record.ID == 0 {
 		if record.Parent == 0 {
 			return true, nil
 		}
-		return false, fmt.Errorf("root node has parent", nil)
+		return false, fmt.Errorf("root node has parent with ID: %d", record.Parent)
 	}
 	return false, nil
 }
 
-func insertNode(parent *Node, records []Record) *Node {
-	for _, record := range records {
-		if record.Parent == parent.ID {
-			node := buildNodeFromRecord(record)
-			parent.Children = append(parent.Children, node.Children...)
-			count--
-		}
+// insertNode inserts a given record into its parent node's
+// array of children.
+func insertNode(parent *Node, record Record) {
+	if record.Parent == parent.ID {
+		child := &Node{ID: record.ID}
+		parent.Children = append(parent.Children, child)
 	}
-	return parent
 }
 
+// mergeNodes checks that the given nodes have the same ID.
+// If they do, the nodes' list of children are merged.  Else,
+// an error is returned to the caller.
+func mergeNodes(n1, n2 *Node) (*Node, error) {
+	if n1.ID != n2.ID {
+		return nil, fmt.Errorf("cannot merge nodes: node ID %d does not match node ID %d", n1.ID, n2.ID)
+	}
+	n1.Children = append(n1.Children, n2.Children...)
+	return n1, nil
+}
+
+// buildNodeFromRecord creates a Node from the given record.
 func buildNodeFromRecord(record Record) *Node {
 	return &Node{
 		ID:       record.Parent,
