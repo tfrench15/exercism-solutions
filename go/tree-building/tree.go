@@ -52,32 +52,18 @@ func Build(records []Record) (*Node, error) {
 		}, nil
 	}
 
-	rootIdx, err := findRoot(records)
-	if err != nil {
-		return nil, err
-	}
-	rootRec := records[rootIdx]
-	root := &Node{ID: rootRec.ID}
-
-	parents := []int{0}
-	records = append(records[:rootIdx], records[rootIdx:]...)
-	for _, record := range records {
-		insertNode(root, record)
-	}
-
+	nodes := buildNodesFromRecords(records)
+	return nodes[0], nil
 }
 
 // findRoot returns the location of the root node in the slice
 // of Records.  An error is returned if there is no root node,
 // or if there are duplicate root nodes.
-func findRoot(records []Record) (int, error) {
+func findRoot(nodes []*Node) (int, error) {
 	count := 0
 	index := -1
-	for i, record := range records {
-		ok, err := isRootNode(record)
-		if err != nil {
-			return -1, err
-		}
+	for i, node := range nodes {
+		ok := isRootNode(node)
 		if ok {
 			index = i
 		}
@@ -92,14 +78,11 @@ func findRoot(records []Record) (int, error) {
 }
 
 // isRootNode determines whether a given record is a valid root node.
-func isRootNode(record Record) (bool, error) {
-	if record.ID == 0 {
-		if record.Parent == 0 {
-			return true, nil
-		}
-		return false, fmt.Errorf("root node has parent with ID: %d", record.Parent)
+func isRootNode(node *Node) bool {
+	if node.ID == 0 {
+		return true
 	}
-	return false, nil
+	return false
 }
 
 // insertNode inserts a given record into its parent node's
@@ -122,10 +105,16 @@ func mergeNodes(n1, n2 *Node) (*Node, error) {
 	return n1, nil
 }
 
-// buildNodeFromRecord creates a Node from the given record.
-func buildNodeFromRecord(record Record) *Node {
-	return &Node{
-		ID:       record.Parent,
-		Children: []*Node{&Node{ID: record.ID}},
+// buildNodesFromRecords builds a slice of nodes from a slice
+// of records.
+func buildNodesFromRecords(records []Record) []*Node {
+	var nodes []*Node
+	for _, record := range records {
+		node := &Node{
+			ID:       record.Parent,
+			Children: []*Node{&Node{ID: record.ID}},
+		}
+		nodes = append(nodes, node)
 	}
+	return nodes
 }
