@@ -16,7 +16,7 @@ fn test_empty_graph() {
 
     assert!(graph.attrs.is_empty());
 }
-
+ 
 #[test]
 #[ignore]
 fn test_graph_with_one_node() {

@@ -44,12 +44,16 @@ pub mod graph {
             }
         }
 
-        pub fn get_node(&self, node: &graph_items::node::Node) -> graph_items::node::Node {
+        pub fn get_node(self, node: &str) -> graph_items::node::Node {
             for elem in self.nodes {
-                if elem == node {
-                    return elem
+                if elem.id == node {
+                    return graph_items::node::Node {
+                        id: elem.id,
+                        attrs: self.attrs
+                    }
                 }
             }
+            panic!("node must be stored")
         }
 
         pub fn get_attr(&self, key: &str) -> String {
@@ -62,43 +66,72 @@ pub mod graph {
 
     pub mod graph_items {
         pub mod node {
+            use std::collections::HashMap;
 
             #[derive(Clone, Debug, PartialEq)]
             pub struct Node {
-                id: String
+                pub id: String,
+                pub attrs: HashMap<String, String>
             }
 
             impl Node {
                 pub fn new(s: &str) -> Node {
-                    Node { id: s.to_string() }
+                    Node { 
+                        id: s.to_string(),
+                        attrs: HashMap::new()
+                    }
                 }
 
                 pub fn with_attrs(self, attrs: &[(&str, &str)]) -> Node {
-                    Node { id: self.id }
+                    let mut map: HashMap<String, String> = self.attrs;
+                    map.insert(attrs[0].0.to_string(), attrs[0].1.to_string());
+
+                    Node { 
+                        id: self.id,
+                        attrs: map
+                    }
+                }
+
+                pub fn get_attr(self, attr: &str) -> String {
+                    match self.attrs.get(attr) {
+                        Some(v) => { return v.to_string() },
+                        None => { return String::new() }
+                    }
+                }
+
+                pub fn expect(&self, msg: &str) -> String {
+                    msg.to_string()
                 }
             }
         }
 
         pub mod edge {
+            use std::collections::HashMap;
 
             #[derive(Clone, Debug, PartialEq)]
             pub struct Edge {
                 head: String,
-                tail: String
+                tail: String,
+                attrs: HashMap<String, String>
             }
 
             impl Edge {
                 pub fn new(a: &str, b: &str) -> Edge {
                     Edge {
                         head: a.to_string(),
-                        tail: b.to_string()
+                        tail: b.to_string(),
+                        attrs: HashMap::new()
                     }
                 }
 
                 pub fn with_attrs(self, attrs: &[(&str, &str)]) -> Edge {
+                    let mut map: HashMap<String, String> = self.attrs;
+                    map.insert(attrs[0].0.to_string(), attrs[0].1.to_string());
+
                     Edge {
                         head: self.head,
-                        tail: self.tail
+                        tail: self.tail,
+                        attrs: map
                     }
                 }
             }
