@@ -1,7 +1,7 @@
 pub mod graph {
     use std::collections::HashMap;
         
-    #[derive(Debug, Clone, Default)]
+    #[derive(Debug, Clone, Default, PartialEq)]
     pub struct Graph {
         pub nodes: Vec<graph_items::node::Node>,
         pub edges: Vec<graph_items::edge::Edge>,
@@ -44,22 +44,22 @@ pub mod graph {
             }
         }
 
-        pub fn get_node(self, node: &str) -> graph_items::node::Node {
+        pub fn get_node(self, node: &str) -> Result<graph_items::node::Node, ()> {
             for elem in self.nodes {
                 if elem.id == node {
-                    return graph_items::node::Node {
+                    return Ok(graph_items::node::Node {
                         id: elem.id,
                         attrs: self.attrs
-                    }
+                    })
                 }
             }
             panic!("node must be stored")
         }
 
-        pub fn get_attr(&self, key: &str) -> String {
+        pub fn get_attr(&self, key: &str) -> Option<&str> {
             match self.attrs.get(key) {
-                Some(value) => { return value.to_string() },
-                None => { return String::new() }
+                Some(value) => { Some(&value) },
+                None => { None }
             }
         }
     }
@@ -92,10 +92,10 @@ pub mod graph {
                     }
                 }
 
-                pub fn get_attr(self, attr: &str) -> String {
+                pub fn get_attr(&self, attr: &str) -> Option<&str> {
                     match self.attrs.get(attr) {
-                        Some(v) => { return v.to_string() },
-                        None => { return String::new() }
+                        Some(v) => { return Some(&v) },
+                        None => { None }
                     }
                 }
 
