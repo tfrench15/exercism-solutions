@@ -35,7 +35,9 @@ pub mod graph {
 
         pub fn with_attrs(self, a: &[(&str, &str)]) -> Graph {
             let mut map: HashMap<String, String> = self.attrs;
-            map.insert(a[0].0.to_string(), a[0].1.to_string());
+            for elem in a {
+                map.insert(elem.0.to_string(), elem.1.to_string());
+            }
 
             Graph {
                 nodes: self.nodes,
@@ -84,7 +86,9 @@ pub mod graph {
 
                 pub fn with_attrs(self, attrs: &[(&str, &str)]) -> Node {
                     let mut map: HashMap<String, String> = self.attrs;
-                    map.insert(attrs[0].0.to_string(), attrs[0].1.to_string());
+                    for attr in attrs {
+                        map.insert(attr.0.to_string(), attr.1.to_string());
+                    }
 
                     Node { 
                         id: self.id,
