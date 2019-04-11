@@ -145,3 +145,23 @@ fn test_graph_stores_attributes() {
         Some("bef")
     );
 }
+
+#[test]
+#[ignore]
+fn test_graph_node_getter() {
+    let attributes = [("foo", "bar"), ("bat", "baz"), ("bim", "bef")];
+    let graph = Graph::new().with_nodes(
+        &['a', 'b', 'c']
+            .iter()
+            .enumerate()
+            .map(|(i, n)| Node::new(&n.to_string()).with_attrs(&attributes[i..i + 1]))
+            .collect::<Vec<_>>(),
+    );
+
+    let node = Node::new("c").with_attrs(&[("bim", "bef")]);
+
+    assert_eq!(
+        graph.get_node("c"),
+        Some(node)
+    );
+}

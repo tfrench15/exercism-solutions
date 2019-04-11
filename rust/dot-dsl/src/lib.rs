@@ -46,13 +46,10 @@ pub mod graph {
             }
         }
 
-        pub fn get_node(self, node: &str) -> Result<graph_items::node::Node, ()> {
+        pub fn get_node(self, node: &str) -> Option<graph_items::node::Node> {
             for elem in self.nodes {
                 if elem.id == node {
-                    return Ok(graph_items::node::Node {
-                        id: elem.id,
-                        attrs: self.attrs
-                    })
+                    return Some(elem)
                 }
             }
             panic!("node must be stored")
