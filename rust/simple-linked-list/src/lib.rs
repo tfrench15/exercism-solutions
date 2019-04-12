@@ -1,30 +1,63 @@
 pub struct SimpleLinkedList<T> {
-    // Delete this field
-    // dummy is needed to avoid unused parameter error during compilation
-    dummy: ::std::marker::PhantomData<T>,
+    head: Option<Box<Node<T>>>
+}
+
+struct Node<T> {
+    data: T,
+    next: Option<Box<Node<T>>>
 }
 
 impl<T> SimpleLinkedList<T> {
     pub fn new() -> Self {
-        unimplemented!()
+        SimpleLinkedList {
+            head: None
+        }
     }
 
     pub fn len(&self) -> usize {
-        unimplemented!()
+        let mut length: usize = 0;
+        let mut head = &self.head;
+        loop {
+            match head {
+                Some(v) => {
+                    length += 1;
+                    head = &v.next;
+                },
+                None => {
+                    return length
+                }
+            }
+        }
     }
 
-    pub fn push(&mut self, _element: T) {
-        unimplemented!()
+    pub fn push(&mut self, element: T) {
+        let node = Node {
+            data: element,
+            next: None
+        };
+
+        loop {
+            match &self.head {
+                Some(v) => {
+                    self.head = v.next;
+                    continue;
+                },
+                None => {
+                    self.head = Some(Box::new(node));
+                }
+            }
+        }
     }
 
     pub fn pop(&mut self) -> Option<T> {
-        unimplemented!()
+        None
     }
 
     pub fn peek(&self) -> Option<&T> {
-        unimplemented!()
+        None
     }
 }
+
 
 impl<T: Clone> SimpleLinkedList<T> {
     pub fn rev(&self) -> SimpleLinkedList<T> {
