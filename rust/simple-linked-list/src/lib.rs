@@ -62,8 +62,12 @@ impl<T: Clone> SimpleLinkedList<T> {
 }
 
 impl<'a, T: Clone> From<&'a [T]> for SimpleLinkedList<T> {
-    fn from(_item: &[T]) -> Self {
-        unimplemented!()
+    fn from(item: &[T]) -> Self {
+        let mut linked_list = SimpleLinkedList::new();
+        for i in item {
+            linked_list.push(i.to_owned())
+        }
+        linked_list
     }
 }
 
