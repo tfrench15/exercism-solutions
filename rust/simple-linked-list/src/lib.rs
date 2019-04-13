@@ -31,30 +31,26 @@ impl<T> SimpleLinkedList<T> {
     }
 
     pub fn push(&mut self, element: T) {
-        let node = Node {
+        let node = Box::new(Node {
             data: element,
-            next: None
-        };
+            next: self.head.take()
+        });
 
-        loop {
-            match &self.head {
-                Some(v) => {
-                    self.head = v.next;
-                    continue;
-                },
-                None => {
-                    self.head = Some(Box::new(node));
-                }
-            }
-        }
+        self.head = Some(node);
     }
 
     pub fn pop(&mut self) -> Option<T> {
-        None
+        self.head.take().map(|node| {
+            self.head = node.next;
+            node.data
+        })
     }
 
     pub fn peek(&self) -> Option<&T> {
-        None
+        match &self.head {
+            Some(node) => Some(&node.data),
+            None => None
+        }
     }
 }
 
