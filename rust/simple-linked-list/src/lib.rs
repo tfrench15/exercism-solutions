@@ -2,6 +2,7 @@ pub struct SimpleLinkedList<T> {
     head: Option<Box<Node<T>>>
 }
 
+#[derive(Clone)]
 struct Node<T> {
     data: T,
     next: Option<Box<Node<T>>>
@@ -54,10 +55,22 @@ impl<T> SimpleLinkedList<T> {
     }
 }
 
-
 impl<T: Clone> SimpleLinkedList<T> {
     pub fn rev(&self) -> SimpleLinkedList<T> {
-        unimplemented!()
+        let mut rev_list = SimpleLinkedList::new();
+        let mut head = &self.head;
+        loop {
+            match head {
+                None => { break },
+                Some(node) => {
+                    let new_node = node.clone();
+                    rev_list.push(new_node.data);
+                    head = &node.next;
+                    continue
+                }
+            }
+        }
+        rev_list
     }
 }
 
@@ -73,6 +86,5 @@ impl<'a, T: Clone> From<&'a [T]> for SimpleLinkedList<T> {
 
 impl<T> Into<Vec<T>> for SimpleLinkedList<T> {
     fn into(self) -> Vec<T> {
-        unimplemented!()
     }
 }
