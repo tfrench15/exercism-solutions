@@ -1,3 +1,4 @@
+#[derive(Clone)]
 pub struct SimpleLinkedList<T> {
     head: Option<Box<Node<T>>>
 }
@@ -86,5 +87,20 @@ impl<'a, T: Clone> From<&'a [T]> for SimpleLinkedList<T> {
 
 impl<T> Into<Vec<T>> for SimpleLinkedList<T> {
     fn into(self) -> Vec<T> {
+        let mut v = Vec::new();
+        let mut list = self;
+
+        loop {
+            match list.pop() {
+                None => { break },
+                Some(node) => {
+                    v.push(node);
+                    continue
+                } 
+            }
+        }
+        v.reverse();
+        v
     }
 }
+
