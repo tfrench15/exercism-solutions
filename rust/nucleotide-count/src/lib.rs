@@ -19,12 +19,18 @@ pub fn count(nucleotide: char, dna: &str) -> Result<usize, char> {
 }
 
 pub fn nucleotide_counts(dna: &str) -> Result<HashMap<char, usize>, char> {
-    let mut map: HashMap<char, usize> = HashMap::new();
+    let mut map: HashMap<char, usize> = 
+        [('A', 0),
+         ('C', 0),
+         ('G', 0),
+         ('T', 0)]
+         .iter().cloned().collect();
     for ch in dna.chars() {
         if !is_valid_char(ch) {
             return Err(ch)
         } else {
-            *map.entry(ch).or_insert(0) += 1;
+            let counter = map.entry(ch).or_insert(0);
+            *counter += 1;
         }
     }
     Ok(map)
