@@ -39,3 +39,17 @@ fn limit_of_1000() {
     ];
     assert_eq!(sieve::primes_up_to(1000), expected);
 }
+
+#[test]
+#[ignore]
+fn is_four_prime() {
+    let expected = false;
+    assert_eq!(sieve::is_prime(4), expected);
+}
+
+#[test]
+#[ignore]
+fn is_five_prime() {
+    let expected = true;
+    assert_eq!(sieve::is_prime(5), expected);
+}
