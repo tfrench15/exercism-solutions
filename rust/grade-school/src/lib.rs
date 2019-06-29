@@ -16,7 +16,14 @@ impl School {
     }
 
     pub fn grades(&self) -> Vec<u32> {
-        self.roster.values().map(|v| v.to_owned()).collect()
+        let mut levels: Vec<u32> = self.roster.values()
+            .map(|v| v.to_owned())
+            .collect();
+
+        levels.sort();
+        levels.dedup();
+
+        levels
     }
 
     // If grade returned an `Option<&Vec<String>>`,
@@ -40,6 +47,7 @@ impl School {
         }
 
         if class.len() > 0 {
+            class.sort();
             return Some(class)
         } 
         None
