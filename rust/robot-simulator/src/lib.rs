@@ -123,14 +123,16 @@ impl Robot {
         }
     }
 
-    pub fn instructions(self, instructions: &str) -> Self {
+    pub fn instructions(mut self, instructions: &str) -> Self {
         for ch in instructions.chars() {
             match ch {
-                'R' => { self.turn_right() },
-                'L' => { self.turn_left() },
-                'A' => { self.advance() },
+                'R' => { self = self.turn_right(); },
+                'L' => { self = self.turn_left(); },
+                'A' => { self = self.advance(); },
+                _ => { continue },
             }
         }
+        self
     }
 
     pub fn position(&self) -> (i32, i32) {
