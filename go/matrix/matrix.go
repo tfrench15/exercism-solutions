@@ -15,6 +15,7 @@ type Matrix struct {
 func New(s string) (*Matrix, error) {
 	m := &Matrix{}
 	lines := strings.Split(s, "\n") // [1 2 3, 4 5 6]
+	fmt.Println(lines)
 	for _, slc := range lines {
 		line := strings.Split(slc, " ")
 		var nums []int
@@ -42,7 +43,17 @@ func New(s string) (*Matrix, error) {
 
 // Rows returns the rows of the Matrix.
 func (m *Matrix) Rows() [][]int {
-	return m.rows
+	var rows [][]int
+
+	for _, row := range m.rows {
+		var r []int
+		for _, entry := range row {
+			r = append(r, entry)
+		}
+		rows = append(rows, r)
+	}
+
+	return rows
 }
 
 // Cols returns the columns of the Matrix.
