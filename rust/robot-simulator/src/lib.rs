@@ -124,10 +124,13 @@ impl Robot {
     }
 
     pub fn instructions(self, instructions: &str) -> Self {
-        unimplemented!(
-            "Follow the given sequence of instructions: {}",
-            instructions
-        )
+        for ch in instructions.chars() {
+            match ch {
+                'R' => { self.turn_right() },
+                'L' => { self.turn_left() },
+                'A' => { self.advance() },
+            }
+        }
     }
 
     pub fn position(&self) -> (i32, i32) {
