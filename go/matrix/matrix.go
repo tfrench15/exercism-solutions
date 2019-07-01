@@ -69,7 +69,11 @@ func (m *Matrix) Cols() [][]int {
 	return columns
 }
 
-// Set does something I'm not sure about yet.
-func (m *Matrix) Set(rows, cols, vals int) bool {
-	return false
+// Set sets an entry in the matrix.
+func (m *Matrix) Set(row, col, val int) bool {
+	if row >= len(m.rows) || col >= len(m.rows[0]) {
+		return false
+	}
+	m.rows[col][row] = val
+	return true
 }
