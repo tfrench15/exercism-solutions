@@ -28,9 +28,10 @@ impl Queen {
     }
 
     pub fn can_attack(&self, other: &Queen) -> bool {
-        if is_same_file(&self, other) || is_same_rank(&self, other) {
+        if is_same_file(&self, other) || is_same_rank(&self, other) || is_diagonal(&self, other) {
             return true
         }
+
         false
     }
 }
@@ -50,5 +51,5 @@ fn is_same_rank(first: &Queen, other: &Queen) -> bool {
 }
 
 fn is_diagonal(first: &Queen, other: &Queen) -> bool {
-    unimplemented!()
+    (first.pos.file - other.pos.file).abs() == (first.pos.rank - other.pos.rank).abs()
 }
