@@ -1,7 +1,7 @@
 #[derive(Debug)]
 pub struct ChessPosition {
-    x: i32, 
-    y: i32,
+    rank: i32, 
+    file: i32,
 }
 
 #[derive(Debug)]
@@ -16,8 +16,8 @@ impl ChessPosition {
         }
 
         Some(ChessPosition {
-            x: rank,
-            y: file,
+            rank: rank,
+            file: file,
         })
     }
 }
@@ -28,6 +28,27 @@ impl Queen {
     }
 
     pub fn can_attack(&self, other: &Queen) -> bool {
-        true
+        if is_same_file(&self, other) || is_same_rank(&self, other) {
+            return true
+        }
+        false
     }
+}
+
+fn is_same_file(first: &Queen, other: &Queen) -> bool {
+    if first.pos.file == other.pos.file {
+        return true
+    }
+    false
+}
+
+fn is_same_rank(first: &Queen, other: &Queen) -> bool {
+    if first.pos.rank == other.pos.rank {
+        return true
+    }
+    false
+}
+
+fn is_diagonal(first: &Queen, other: &Queen) -> bool {
+    unimplemented!()
 }
