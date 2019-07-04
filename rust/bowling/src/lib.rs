@@ -38,10 +38,12 @@ impl Frame {
             0 => {
                 self.rolls += 1;
                 self.pins -= pins;
+                self.score += pins;
                 if self.pins == 0 {
                     self.status = FrameStatus::Strike;
                     return Ok(())
-                } else if self.pins < 0 {
+                } 
+                if pins > 10 {
                     return Err(Error::NotEnoughPinsLeft)
                 } else {
                     return Ok(())
@@ -50,11 +52,12 @@ impl Frame {
             1 => { 
                 self.rolls += 1;
                 self.pins -= pins;
+                self.score += pins;
                 if self.pins == 0 {
                     self.status = FrameStatus::Spare;
                     return Ok(())
                 }
-                if self.pins < 0 {
+                if pins + self.pins > 10 {
                     return Err(Error::NotEnoughPinsLeft)
                 } else {
                     self.status = FrameStatus::Open;
