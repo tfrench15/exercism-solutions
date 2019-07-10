@@ -67,11 +67,8 @@ impl Frame {
                     self.status = FrameStatus::Open;
                     return Ok(())
                 }
-            },
-            2 => { 
-                Ok(())
-            }, // TODO: handle 10th frame scoring
-            _ => { Ok(()) },
+            }, 
+            _ => { Err(Error::NotEnoughPinsLeft) },
         }
     }
 
@@ -91,18 +88,21 @@ impl Frame {
             1 => {
                 self.rolls += 1;
                 self.roll_two = Some(pins);
-                
-                if pins + self.pins > 10 && self.roll_one != 10 {
+
+                if self.roll_one != 10 && self.roll_one + pins > 10 {
                     return Err(Error::NotEnoughPinsLeft)
+                } else if self.roll_one != 10 && self.roll_one + pins < 10 {
+                    self.status = FrameStatus::Open;
+                    self.pins += pins;
+                    return Ok(())
                 } else {
                     self.pins += pins;
                     return Ok(())
                 }
             },
             2 => {
-                // open tenth frame
-                if self.roll_one + self.roll_two.unwrap() < 10 {
-                    self.status = FrameStatus::Open;
+                // open tenth frame, no bonus roll
+                if self.status == FrameStatus::Open {
                     return Ok(())
                 }
 
