@@ -68,8 +68,77 @@ impl Frame {
                     return Ok(())
                 }
             },
-            2 => { return Ok(()) }, // TODO: handle 10th frame scoring
-            _ => { return Ok(()) },
+            2 => { 
+                Ok(())
+            }, // TODO: handle 10th frame scoring
+            _ => { Ok(()) },
+        }
+    }
+
+    fn roll_tenth_frame(&mut self, pins: u16) -> Result<(), Error> {
+        if pins > 10 {
+            return Err(Error::NotEnoughPinsLeft)
+        }
+
+        match self.rolls {
+            0 => {
+                self.rolls += 1;
+                self.roll_one += pins;
+                self.pins += pins;
+
+                Ok(())
+            },
+            1 => {
+                self.rolls += 1;
+                self.roll_two = Some(pins);
+                
+                if pins + self.pins > 10 && self.roll_one != 10 {
+                    return Err(Error::NotEnoughPinsLeft)
+                } else {
+                    self.pins += pins;
+                    return Ok(())
+                }
+            },
+            2 => {
+                // open tenth frame
+                if self.roll_one + self.roll_two.unwrap() < 10 {
+                    self.status = FrameStatus::Open;
+                    return Ok(())
+                }
+
+                // strike and open roll to lead off the tenth frame
+                // earns a third roll
+                if self.roll_one == 10 && self.roll_two.unwrap() < 10 {
+                    self.rolls += 1;
+                    self.roll_three = Some(pins);
+
+                    if self.roll_two.unwrap() + self.roll_three.unwrap() > 10 {
+                        return Err(Error::NotEnoughPinsLeft)
+                    } else {
+                        self.pins += pins;
+                        return Ok(())
+                    }
+                }
+
+                // spare to lead off the tenth frame earns a third roll
+                if self.roll_one + self.roll_two.unwrap() == 10 {
+                    self.status = FrameStatus::Spare;
+                    self.rolls += 1;
+                    self.roll_three = Some(pins);
+                    return Ok(())
+                } 
+                
+                // two strikes to lead off the tenth frame earns a third roll
+                if self.roll_one == 10 && self.roll_two.unwrap() == 10 {
+                    self.status = FrameStatus::Strike;
+                    self.rolls += 1;
+                    self.roll_three = Some(pins);
+                    return Ok(())
+                }
+
+                Ok(())
+            },
+            _ => { Err(Error::GameComplete) }
         }
     }
 }
@@ -80,13 +149,13 @@ impl BowlingGame {
     }
 
     pub fn roll(&mut self, pins: u16) -> Result<(), Error> {
-        if self.frames.len() == 10 && self.frames[9].status != FrameStatus::Incomplete {
-            return Err(Error::GameComplete)
-        };
-
         if self.frames.len() == 0 {
             self.frames.push(Frame::new());
-        };
+        }
+
+        if self.frames.len() == 10 && self.frames[9].status != FrameStatus::Incomplete {
+            return Err(Error::GameComplete)
+        } 
 
         match self.frames.last().unwrap().status {
             FrameStatus::Incomplete => { 
@@ -96,21 +165,39 @@ impl BowlingGame {
             },
             FrameStatus::Strike => { 
                 self.frames.push(Frame::new());
-                self.frames.last_mut()
+                if self.frames.len() == 10 {
+                    self.frames.last_mut()
+                               .unwrap()
+                               .roll_tenth_frame(pins)
+                } else {
+                    self.frames.last_mut() 
                            .unwrap()
                            .roll(pins)
+                }
             },
             FrameStatus::Spare => { 
                 self.frames.push(Frame::new());
-                self.frames.last_mut()
+                if self.frames.len() == 10 {
+                    self.frames.last_mut()
+                               .unwrap()
+                               .roll_tenth_frame(pins)
+                } else {
+                    self.frames.last_mut() 
                            .unwrap()
                            .roll(pins)
+                }
             },
             FrameStatus::Open => { 
                 self.frames.push(Frame::new());
-                self.frames.last_mut() 
+                if self.frames.len() == 10 {
+                    self.frames.last_mut()
+                               .unwrap()
+                               .roll_tenth_frame(pins)
+                } else {
+                    self.frames.last_mut() 
                            .unwrap()
                            .roll(pins)
+                }
             },
         }
     }
@@ -119,8 +206,8 @@ impl BowlingGame {
         match self.frames.len() {
             10 => {
                 let mut score = 0;
-                for frame in self.frames.windows(3) {
-                    score += score_frame(&frame[0], &frame[1], &frame[2]);
+                for i in 0..self.frames.len() {
+                    score += score_frame(&self.frames, i).unwrap()
                 }
 
                 Some(score)
@@ -130,18 +217,22 @@ impl BowlingGame {
     }
 }
 
-fn score_frame(frame_one: &Frame, frame_two: &Frame, frame_three: &Frame) -> u16 {
-    match frame_one.status {
-        FrameStatus::Open => { frame_one.pins },
-        FrameStatus::Spare => { frame_one.pins + frame_two.roll_one },
-        FrameStatus::Strike => { 
-            if frame_two.roll_two.is_some() {
-                return frame_one.pins + frame_two.pins
-            } else {
-                return frame_one.pins + frame_two.pins + frame_three.roll_one
-            }
-        },
-        FrameStatus::Incomplete => { 0 },
+fn score_frame(frames: &[Frame], idx: usize) -> Option<u16> {
+    if idx == 9 {
+        return Some(frames[idx].pins)
+    } else {
+        match frames[idx].status {
+            FrameStatus::Open => { Some(frames[idx].pins) },
+            FrameStatus::Spare => { Some(10 + frames[idx+1].roll_one) },
+            FrameStatus::Strike => { 
+                if frames[idx+1].roll_two.is_none() {
+                    return Some(10 + frames[idx+1].roll_one + frames[idx+2].roll_one)
+                } else {
+                    return Some(10 + frames[idx+1].roll_one + frames[idx+1].roll_two.unwrap())
+                }
+            },
+            FrameStatus::Incomplete => { None },
+        }
     }
 }
 
