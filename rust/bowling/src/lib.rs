@@ -167,6 +167,13 @@ impl BowlingGame {
     pub fn score(&self) -> Option<u16> {
         match self.frames.len() {
             10 => {
+                if self.frames[9].status == FrameStatus::Strike && self.frames[9].roll_three.is_none() {
+                    return None
+                }
+                if self.frames[9].status == FrameStatus::Spare && self.frames[9].roll_three.is_none() {
+                    return None
+                }
+                
                 let mut score = 0;
                 for i in 0..self.frames.len() {
                     score += score_frame(&self.frames, i).unwrap()
@@ -189,7 +196,7 @@ fn score_frame(frames: &[Frame], idx: usize) -> Option<u16> {
     } else {
         match frames[idx].status {
             FrameStatus::Open => { Some(frames[idx].roll_one + frames[idx].roll_two.unwrap()) },
-            FrameStatus::Spare => { Some(10 + frames[idx].roll_one) },
+            FrameStatus::Spare => { Some(10 + frames[idx+1].roll_one) },
             FrameStatus::Strike => { 
                 if frames[idx+1].roll_two.is_none() {
                     return Some(10 + frames[idx+1].roll_one + frames[idx+2].roll_one)
