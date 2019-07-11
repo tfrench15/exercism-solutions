@@ -103,7 +103,7 @@ impl Frame {
             2 => {
                 // open tenth frame, no bonus roll
                 if self.status == FrameStatus::Open {
-                    return Ok(())
+                    return Err(Error::GameComplete)
                 }
 
                 // strike and open roll to lead off the tenth frame
