@@ -173,7 +173,7 @@ impl BowlingGame {
                 if self.frames[9].status == FrameStatus::Spare && self.frames[9].roll_three.is_none() {
                     return None
                 }
-                
+
                 let mut score = 0;
                 for i in 0..self.frames.len() {
                     score += score_frame(&self.frames, i).unwrap()
@@ -201,7 +201,7 @@ fn score_frame(frames: &[Frame], idx: usize) -> Option<u16> {
                 if frames[idx+1].roll_two.is_none() {
                     return Some(10 + frames[idx+1].roll_one + frames[idx+2].roll_one)
                 } else {
-                    return Some(10 + frames[idx+1].roll_one + frames[idx+2].roll_two.unwrap())
+                    return Some(10 + frames[idx+1].roll_one + frames[idx+1].roll_two.unwrap())
                 }
             },
             FrameStatus::Incomplete => { None },
