@@ -47,14 +47,21 @@ pub fn tally(match_results: &str) -> String {
                 *team_two.draws += 1;
                 *team_two.points += 1;
             },
+            _ => { continue },
         }
     }
-
+    
     String::new()
 }
 
 impl Record {
     fn new() -> Self {
-        Record { 0, 0, 0, 0, 0}
+        Record {
+            matches_played: 0,
+            wins: 0,
+            draws: 0,
+            losses: 0,
+            points: 0,
+        }
     }
 }
