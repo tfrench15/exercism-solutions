@@ -21,31 +21,31 @@ pub fn tally(match_results: &str) -> String {
         match result[2] {
             "win" => { 
                 let winning_team = records.entry(result[0]).or_insert(Record::new());
-                *winning_team.matches_played += 1;
-                *winning_team.wins += 1;
-                *winning_team.points += 3;
+                winning_team.matches_played += 1;
+                winning_team.wins += 1;
+                winning_team.points += 3;
                 let losing_team = records.entry(result[1]).or_insert(Record::new());
-                *losing_team.matches_played += 1;
-                *losing_team.losses += 1;
+                losing_team.matches_played += 1;
+                losing_team.losses += 1;
             },
             "loss" => { 
                 let winning_team = records.entry(result[1]).or_insert(Record::new());
-                *winning_team.matches_played += 1;
-                *winning_team.wins += 1;
-                *winning_team.points += 3;
+                winning_team.matches_played += 1;
+                winning_team.wins += 1;
+                winning_team.points += 3;
                 let losing_team = records.entry(result[0]).or_insert(Record::new());
-                *losing_team.matches_played += 1;
-                *losing_team.losses += 1;
+                losing_team.matches_played += 1;
+                losing_team.losses += 1;
             },
             "draw" => { 
                 let team_one = records.entry(result[0]).or_insert(Record::new());
-                *team_one.matches_played += 1;
-                *team_one.draws += 1;
-                *team_one.points += 1;
+                team_one.matches_played += 1;
+                team_one.draws += 1;
+                team_one.points += 1;
                 let team_two = records.entry(result[1]).or_insert(Record::new());
-                *team_two.matches_played += 1;
-                *team_two.draws += 1;
-                *team_two.points += 1;
+                team_two.matches_played += 1;
+                team_two.draws += 1;
+                team_two.points += 1;
             },
             _ => { continue },
         }
