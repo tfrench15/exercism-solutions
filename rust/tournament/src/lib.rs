@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::cmp::Ordering;
 
 struct Record {
     matches_played: u32,
@@ -50,6 +51,9 @@ pub fn tally(match_results: &str) -> String {
             _ => { continue },
         }
     }
+
+    let mut standings: Vec<&Record> = records.values().collect();
+    standings.sort
     
     String::new()
 }
@@ -63,5 +67,17 @@ impl Record {
             losses: 0,
             points: 0,
         }
+    }
+}
+
+impl PartialOrd for Record {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.points.partial_cmp(&other.points)
+    }
+}
+
+impl PartialEq for Record {
+    fn eq(&self, other: &Self) -> bool {
+        self.points == other.points
     }
 }
