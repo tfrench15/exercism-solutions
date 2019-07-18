@@ -17,36 +17,34 @@ pub fn tally(match_results: &str) -> String {
         return header
     }
 
-    let mut records = HashMap::new();
+    let mut teams = HashMap::new();
 
     for game in match_results.lines() {
         let result: Vec<&str> = game.split(";").collect();
+
         match result[2] {
-            "win" => { 
-                let winning_team = records.entry(result[0]).or_insert(Record::new());
-                winning_team.matches_played += 1;
-                winning_team.wins += 1;
-                winning_team.points += 3;
-                let losing_team = records.entry(result[1]).or_insert(Record::new());
-                losing_team.matches_played += 1;
-                losing_team.losses += 1;
+            "win" => {
+                let team_one = teams.entry(result[0]).or_insert(Team::new(result[0]));
+                team_one.wins += 1;
+                team_one.points += 3;
+
+                let team_two = teams.entry(result[1]).or_insert(Team::new(result[1]));
+                team_two.losses += 1;
             },
-            "loss" => { 
-                let winning_team = records.entry(result[1]).or_insert(Record::new());
-                winning_team.matches_played += 1;
-                winning_team.wins += 1;
-                winning_team.points += 3;
-                let losing_team = records.entry(result[0]).or_insert(Record::new());
-                losing_team.matches_played += 1;
-                losing_team.losses += 1;
-            },
-            "draw" => { 
-                let team_one = records.entry(result[0]).or_insert(Record::new());
-                team_one.matches_played += 1;
+            "loss" => {
+                let team_one = teams.entry(result[0]).or_insert(Team::new(result[0]));
+                team_one.losses += 1;
+
+                let team_two = teams.entry(result[1]).or_insert(Team::new(result[1]));
+                team_two.wins += 1;
+                team_two.points += 3;
+            }, 
+            "draw" => {
+                let team_one = teams.entry(result[0]).or_insert(Team::new(result[0]));
                 team_one.draws += 1;
                 team_one.points += 1;
-                let team_two = records.entry(result[1]).or_insert(Record::new());
-                team_two.matches_played += 1;
+
+                let team_two = teams.entry(result[1]).or_insert(Team::new(result[1]));
                 team_two.draws += 1;
                 team_two.points += 1;
             },
@@ -54,7 +52,7 @@ pub fn tally(match_results: &str) -> String {
         }
     }
 
-    let mut standings: Vec<&Record> = records.values().collect();
+    let mut standings: Vec<&Team> = teams.values().collect();
     standings.sort();
     for standing in standings {
         println!("{:?}", standing)
@@ -66,7 +64,7 @@ pub fn tally(match_results: &str) -> String {
 impl Team {
     fn new(name: &str) -> Self {
         Team {
-            name: name,
+            name: name.to_string(),
             matches_played: 0,
             wins: 0,
             draws: 0,
@@ -75,6 +73,7 @@ impl Team {
         }
     }
 }
+
 
 impl Ord for Team {
     fn cmp(&self, other: &Self) -> Ordering {
