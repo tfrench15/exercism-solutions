@@ -25,26 +25,32 @@ pub fn tally(match_results: &str) -> String {
         match result[2] {
             "win" => {
                 let team_one = teams.entry(result[0]).or_insert(Team::new(result[0]));
+                team_one.matches_played += 1;
                 team_one.wins += 1;
                 team_one.points += 3;
 
                 let team_two = teams.entry(result[1]).or_insert(Team::new(result[1]));
+                team_two.matches_played += 1;
                 team_two.losses += 1;
             },
             "loss" => {
                 let team_one = teams.entry(result[0]).or_insert(Team::new(result[0]));
+                team_one.matches_played += 1;
                 team_one.losses += 1;
 
                 let team_two = teams.entry(result[1]).or_insert(Team::new(result[1]));
+                team_two.matches_played += 1;
                 team_two.wins += 1;
                 team_two.points += 3;
             }, 
             "draw" => {
                 let team_one = teams.entry(result[0]).or_insert(Team::new(result[0]));
+                team_one.matches_played += 1;
                 team_one.draws += 1;
                 team_one.points += 1;
 
                 let team_two = teams.entry(result[1]).or_insert(Team::new(result[1]));
+                team_two.matches_played += 1;
                 team_two.draws += 1;
                 team_two.points += 1;
             },
@@ -54,11 +60,13 @@ pub fn tally(match_results: &str) -> String {
 
     let mut standings: Vec<&Team> = teams.values().collect();
     standings.sort();
+    let mut table = header + "\n";
     for standing in standings {
-        println!("{:?}", standing)
+        table += &standing.print();
+        table += "\n";
     }
 
-    String::new()
+    table.trim_end().to_string()
 }
 
 impl Team {
@@ -72,8 +80,11 @@ impl Team {
             points: 0,
         }
     }
-}
 
+    fn print(&self) -> String {
+        format!("{0: <30} | {1: >2} | {2: >2} | {3: >2} | {4: >2} | {5: >2}", self.name, self.matches_played, self.wins, self.draws, self.losses, self.points)
+    }
+}
 
 impl Ord for Team {
     fn cmp(&self, other: &Self) -> Ordering {
