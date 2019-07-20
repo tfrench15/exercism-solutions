@@ -59,7 +59,10 @@ pub fn tally(match_results: &str) -> String {
     }
 
     let mut standings: Vec<&Team> = teams.values().collect();
-    standings.sort();
+    standings.sort_by(|a, b| {
+        a.points.cmp(&b.points).reverse()
+            .then(a.name.cmp(&b.name))
+    });
     let mut table = header + "\n";
     for standing in standings {
         table += &standing.print();
@@ -94,7 +97,7 @@ impl Ord for Team {
 
 impl PartialOrd for Team {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        (&other.points).partial_cmp(&self.points)
+        other.points.partial_cmp(&self.points)
     }
 }
 
