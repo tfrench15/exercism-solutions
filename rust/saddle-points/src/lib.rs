@@ -2,6 +2,9 @@ pub fn find_saddle_points(input: &[Vec<u64>]) -> Vec<(usize, usize)> {
     let mut saddle_points: Vec<(usize, usize)> = Vec::new();
 
     for row in 0..input.len() {
+        if input[row].len() == 0 {
+            return saddle_points
+        }
         let max = find_max_in_row(&input[row]);
         for (idx, val) in input[row].iter().enumerate() {
             if *val == max {
