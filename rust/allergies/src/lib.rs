@@ -16,8 +16,14 @@ pub enum Allergen {
 }
 
 impl Allergies {
-    pub fn new(score: u32) -> Self { 
-        Allergies { foods: Vec::new() }
+    pub fn new(score: u32) -> Self {
+        let mut allergies = Vec::new();
+        if score.is_power_of_two() {
+            allergies.push(score.next_power_of_two());
+        } else {
+            let upper_bound = score.next_power_of_two();
+            
+        }
     }
 
     pub fn is_allergic_to(&self, allergen: &Allergen) -> bool {
