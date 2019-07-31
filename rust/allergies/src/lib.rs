@@ -52,7 +52,8 @@ fn compute_allergies(mut score: u32) -> Vec<Allergen> {
     }
     let final_allergy = compute_allergies_for_power_of_two(score);
     allergies.push(final_allergy);
-    
+    allergies.dedup();
+
     allergies
 }
 
