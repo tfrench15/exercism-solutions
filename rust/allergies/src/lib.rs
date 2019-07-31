@@ -1,6 +1,6 @@
 #[derive(Clone)]
 pub struct Allergies {
-    foods: Vec<Allergen>,
+    cause: Vec<Allergen>,
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -17,52 +17,57 @@ pub enum Allergen {
 
 impl Allergies {
     pub fn new(score: u32) -> Self {
-        let mut allergies = Vec::new();
-        match score.is_power_of_two() {
-            true => { 
-                match score.next_power_of_two() {
-                    1 => { allergies.push(Allergen::Eggs); },
-                    2 => { allergies.push(Allergen::Peanuts); },
-                    4 => { allergies.push(Allergen::Shellfish); },
-                    8 => { allergies.push(Allergen::Strawberries); },
-                    16 => { allergies.push(Allergen::Tomatoes); },
-                    32 => { allergies.push(Allergen::Chocolate); },
-                    64 => { allergies.push(Allergen::Pollen); },
-                    128 => { allergies.push(Allergen::Cats); },
-                    _ => { continue },
-                };
-            },
-            false => { 
-                match score {
-                    0 => { continue },
-                    3 => { 
-                        allergies.push(Allergen::Eggs);
-                        allergies.push(Allergen::Peanuts);
-                    },
-                    5..=7 {
-                        allergies.push(Allergen::Shellfish);
-                        score -= 
-                    }
-                }
+        if score == 0 {
+            return Allergies { cause: Vec::new() }
+        } else {
+            match score.is_power_of_two() {
+                true => { 
+                    let allergy = compute_allergies_for_power_of_two(score);
+                    Allergies { cause: vec![allergy] }
+                },
+                false => { 
+                    let causes = compute_allergies(score);
+                    Allergies { cause: causes }
+                },
             }
         }
-
-        Allergies { foods: allergies }
     }
 
     pub fn is_allergic_to(&self, allergen: &Allergen) -> bool {
-        self.foods.contains(allergen)
+        self.cause.contains(allergen)
     }
 
     pub fn allergies(&self) -> Vec<Allergen> {
-        self.foods.clone()
+        self.cause.clone()
     }
 }
 
-fn compute_allergies(score: u32, allergies: Vec<Allergen>) -> Vec<Allergen> {
-    let prev_pow = previous_power_of_two(score);
+fn compute_allergies(mut score: u32) -> Vec<Allergen> {
+    let mut allergies = Vec::new();
+    while !score.is_power_of_two() {
+        let prev_pow = previous_power_of_two(score);
+        let new_allergy = compute_allergies_for_power_of_two(prev_pow);
+        allergies.push(new_allergy);
+        score = score % prev_pow;
+    }
+    let final_allergy = compute_allergies_for_power_of_two(score);
+    allergies.push(final_allergy);
+    
+    allergies
+}
 
-    match prev_pow 
+fn compute_allergies_for_power_of_two(score: u32) -> Allergen {
+    match score {
+        1 => { Allergen::Eggs },
+        2 => { Allergen::Peanuts },
+        4 => { Allergen::Shellfish },
+        8 => { Allergen::Strawberries },
+        16 => { Allergen::Tomatoes },
+        32 => { Allergen::Chocolate },
+        64 => { Allergen::Pollen },
+        128 => { Allergen::Cats },
+        _ => { compute_allergies_for_power_of_two(score/2) },
+    }
 }
 
 fn previous_power_of_two(score: u32) -> u32 {
