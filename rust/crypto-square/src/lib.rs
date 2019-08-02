@@ -9,7 +9,11 @@ pub fn encrypt(input: &str) -> String {
         .map(|ch| ch.to_ascii_lowercase())
         .collect();
 
+    println!("{}", normalized);
+
     let cols = columns(normalized.len());
+
+    println!("{}", cols);
 
     let chars: Vec<char> = normalized
         .chars()
