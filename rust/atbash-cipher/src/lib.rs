@@ -8,11 +8,24 @@ struct Cipher {
 pub fn encode(plain: &str) -> String {
     let cipher = Cipher::new();
 
-    plain
+    let normalized: Vec<char> = plain
         .chars()
-        .filter()
+        .filter(|ch| ch.is_ascii_alphanumeric())
+        .map(|ch| ch.to_ascii_lowercase())
+        .map(|ch| *cipher.mappings.get(&ch).unwrap())
+        .collect();
 
-    String::new()
+    let mut encrypted_phrase: Vec<String> = Vec::new();
+
+    for char_set in normalized.chunks(5) {
+        let encrypted_word: String = char_set
+            .iter()
+            .collect();
+
+        encrypted_phrase.push(encrypted_word);
+    }
+
+    encrypted_phrase.join(" ")
 }
 
 /// "Decipher" with the Atbash cipher.
@@ -36,6 +49,7 @@ impl Cipher {
             'h',
             'i',
             'j',
+            'k',
             'l',
             'm',
             'n',
