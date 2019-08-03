@@ -5,20 +5,19 @@ pub fn encrypt(input: &str) -> String {
 
     let normalized: String = input
         .chars()
-        .filter(|ch| ch.is_ascii_alphabetic())
+        .filter(|ch| ch.is_ascii_alphanumeric() && !ch.is_ascii_whitespace())
         .map(|ch| ch.to_ascii_lowercase())
         .collect();
 
-    let cols = columns(normalized.len());
-    let mut diff = cols.pow(2) - cols;
+    let rectangle = perfect_rectangle(normalized.len());
 
-    let mut chars: Vec<char> = normalized
+    let chars: Vec<char> = normalized
         .chars()
         .collect();
 
     let mut vec_of_words: Vec<String> = Vec::new();
 
-    for chunk in chars.chunks(cols) {
+    for chunk in chars.chunks(rectangle.0) {
         let word: String = chunk
             .iter()
             .collect();
@@ -31,14 +30,19 @@ pub fn encrypt(input: &str) -> String {
     encrypted_words.join(" ")
 }
 
+fn perfect_rectangle(length: usize) -> (usize, usize, usize) {
+    let mut columns: usize = 1;
+    let mut rows: usize = 1;
 
-fn columns(length: usize) -> usize {
-    let mut i: usize = 1;
-    while i.pow(2) < length {
-        i += 1;
+    while (columns * rows) < length {
+        if columns == rows {
+            columns += 1;
+        } else {
+            rows += 1;
+        }
     }
 
-    i
+    (columns, rows, columns * rows)
 }
 
 fn apply_cipher(words: &[String]) -> Vec<String> {
