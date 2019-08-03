@@ -6,13 +6,18 @@ struct Cipher {
 
 /// "Encipher" with the Atbash cipher.
 pub fn encode(plain: &str) -> String {
-    let cipher = Cipher::new();
+    let key = Cipher::new();
 
     let normalized: Vec<char> = plain
         .chars()
         .filter(|ch| ch.is_ascii_alphanumeric())
         .map(|ch| ch.to_ascii_lowercase())
-        .map(|ch| *cipher.mappings.get(&ch).unwrap())
+        .map(|ch| {
+            match key.mappings.get(&ch) {
+                None => { ch },
+                Some(v) => { *v },
+            }
+        })
         .collect();
 
     let mut encrypted_phrase: Vec<String> = Vec::new();
@@ -30,9 +35,20 @@ pub fn encode(plain: &str) -> String {
 
 /// "Decipher" with the Atbash cipher.
 pub fn decode(cipher: &str) -> String {
-    let cipher = Cipher::new();
+    let key = Cipher::new();
 
-    String::new()
+    let decoded_phrase: String = cipher
+        .chars()
+        .filter(|ch| ch.is_ascii_alphanumeric())
+        .map(|ch| {
+            match key.mappings.get(&ch) {
+                None => { ch },
+                Some(v) => { *v },
+            }
+        })
+        .collect();
+
+    decoded_phrase
 }
 
 impl Cipher {
