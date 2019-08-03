@@ -10,12 +10,12 @@ pub fn encrypt(input: &str) -> String {
         .collect();
 
     let cols = columns(normalized.len());
-    let diff = cols.pow(2) - cols;
+    let mut diff = cols.pow(2) - cols;
 
-    let chars: Vec<char> = normalized
+    let mut chars: Vec<char> = normalized
         .chars()
         .collect();
-    
+
     let mut vec_of_words: Vec<String> = Vec::new();
 
     for chunk in chars.chunks(cols) {
