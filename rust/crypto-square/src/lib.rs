@@ -10,6 +10,7 @@ pub fn encrypt(input: &str) -> String {
         .collect();
 
     let cols = columns(normalized.len());
+    let diff = cols.pow(2) - cols;
 
     let chars: Vec<char> = normalized
         .chars()
