@@ -12,20 +12,13 @@ type Frequency map[string]int
 func WordCount(phrase string) Frequency {
 	freq := make(Frequency)
 
-	isApostrophe := func(ch string) bool {
-		if ch == "'" {
-			return true
-		}
-		return false
-	}
-
-	split := func(ch rune) bool {
-		return !unicode.IsLetter(ch) && !unicode.IsNumber(ch) && !isApostrophe(string(ch))
+	split := func(r rune) bool {
+		return !unicode.IsLetter(r) && !unicode.IsNumber(r) && !isApostrophe(r)
 	}
 
 	list := strings.FieldsFunc(phrase, split)
 	for _, word := range list {
-		w := strings.ToLower(word)
+		w := strings.TrimFunc(strings.ToLower(word), isApostrophe)
 		_, ok := freq[w]
 		if !ok {
 			freq[w] = 1
@@ -37,13 +30,9 @@ func WordCount(phrase string) Frequency {
 	return freq
 }
 
-func isApostrophe(word string) bool {
-	for idx, r := range word {
-		if string(r) == "'" {
-			if !unicode.IsLetter(word[idx]-1) && !unicode.IsLetter(rune(word[idx]+1)) {
-				return false
-			}
-		}
+func isApostrophe(r rune) bool {
+	if string(r) == "'" {
+		return true
 	}
-	return true
+	return false
 }
