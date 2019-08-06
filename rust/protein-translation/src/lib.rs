@@ -13,24 +13,7 @@ impl<'a> CodonsInfo<'a> {
     }
 
     pub fn of_rna(&self, rna: &'a str) -> Option<Vec<&'a str>> {
-        let mut proteins = Vec::new();
-        if rna.len() % 3 != 0 {
-            return None
-        } else {
-            let chars: Vec<char> = rna
-                .chars()
-                .collect();
-            for chunk in chars.chunks(3) {
-                match self.map.get(&chunk) {
-                    None => { return None },
-                    Some(v) => { 
-                        proteins.push(*v);
-                    },
-                }
-            }
-        }
-
-        Some(proteins)
+        unimplemented!()
     }
 }
 
