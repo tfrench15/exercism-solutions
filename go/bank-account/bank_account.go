@@ -50,6 +50,7 @@ func (a *Account) Deposit(amount int64) (int64, bool) {
 
 	a.balance += amount
 	if a.balance < 0 {
+		a.balance = 0
 		return 0, false
 	}
 
