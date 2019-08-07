@@ -4,7 +4,8 @@ import "sync"
 
 // Account represents a bank account.
 type Account struct {
-	mu      sync.Mutex
+	sync.Mutex
+
 	balance int64
 	open    bool
 }
@@ -17,7 +18,6 @@ func Open(initialDeposit int64) *Account {
 		return nil
 	}
 	return &Account{
-		mu:      sync.Mutex{},
 		balance: initialDeposit,
 		open:    true,
 	}
@@ -25,8 +25,8 @@ func Open(initialDeposit int64) *Account {
 
 // Balance returns the balance of the Account.
 func (a *Account) Balance() (int64, bool) {
-	a.mu.Lock()
-	defer a.mu.Unlock()
+	a.Lock()
+	defer a.Unlock()
 
 	if !a.open {
 		return 0, false
@@ -38,8 +38,8 @@ func (a *Account) Balance() (int64, bool) {
 // Deposit is a method for depositing or withdrawing money from
 // an Account.
 func (a *Account) Deposit(amount int64) (int64, bool) {
-	a.mu.Lock()
-	defer a.mu.Unlock()
+	a.Lock()
+	defer a.Unlock()
 	if !a.open {
 		return 0, false
 	}
@@ -54,8 +54,8 @@ func (a *Account) Deposit(amount int64) (int64, bool) {
 
 // Close closes an Account.
 func (a *Account) Close() (int64, bool) {
-	a.mu.Lock()
-	defer a.mu.Unlock()
+	a.Lock()
+	defer a.Unlock()
 	if !a.open {
 		return 0, false
 	}
