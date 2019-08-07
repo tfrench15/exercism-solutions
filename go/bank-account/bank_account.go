@@ -32,6 +32,10 @@ func (a *Account) Balance() (int64, bool) {
 		return 0, false
 	}
 
+	if a.balance < 0 {
+		return 0, true
+	}
+
 	return a.balance, true
 }
 
