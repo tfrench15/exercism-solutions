@@ -1,4 +1,4 @@
-use rand::{Rng};
+use rand::{thread_rng, Rng};
 
 pub struct Robot {
     name: String
@@ -38,7 +38,7 @@ impl Robot {
 }
 
 fn generate_random_letter() -> char {
-    let mut rng = rand::thread_rng();
+    let mut rng = thread_rng();
     let rand_num: u32 = rng.gen_range(0, 26);
 
     ALPHABET
@@ -48,6 +48,6 @@ fn generate_random_letter() -> char {
 }
 
 fn generate_random_number() -> u32 {
-    let mut rng = rand::thread_rng();
+    let mut rng = thread_rng();
     rng.gen_range(0, 10)
 }
