@@ -6,6 +6,7 @@ import "sync"
 type Account struct {
 	mu      sync.Mutex
 	balance int64
+	open    bool
 }
 
 // Open creates a new Account with the provided initial deposit.
@@ -18,30 +19,50 @@ func Open(initialDeposit int64) *Account {
 	return &Account{
 		mu:      sync.Mutex{},
 		balance: initialDeposit,
+		open:    true,
 	}
 }
 
 // Balance returns the balance of the Account.
-func (a *Account) Balance() (balance int64, ok bool) {
-	balance = a.balance
-	ok = false
+func (a *Account) Balance() (int64, bool) {
+	a.mu.Lock()
+	defer a.mu.Unlock()
 
-	return balance, ok
+	if !a.open {
+		return 0, false
+	}
+
+	return a.balance, true
 }
 
 // Deposit is a method for depositing or withdrawing money from
 // an Account.
-func (a *Account) Deposit(amount int64) (newBalance int64, ok bool) {
-	newBalance = a.balance + amount
-	ok = false
+func (a *Account) Deposit(amount int64) (int64, bool) {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	if !a.open {
+		return 0, false
+	}
 
-	return newBalance, ok
+	a.balance += amount
+	if a.balance < 0 {
+		return 0, false
+	}
+
+	return a.balance, true
 }
 
 // Close closes an Account.
-func (a *Account) Close() (payout int64, ok bool) {
-	payout = a.balance
-	ok = false
+func (a *Account) Close() (int64, bool) {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	if !a.open {
+		return 0, false
+	}
 
-	return payout, ok
+	payout := a.balance
+	a.balance = 0
+	a.open = false
+
+	return payout, true
 }
