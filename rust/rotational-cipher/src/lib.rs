@@ -1,11 +1,24 @@
-
-const UPPERCASE: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const LOWERCASE: &str = "abcdefghijklmmopqrstuvwxyz";
+use std::collections::HashMap;
 
 pub fn rotate(input: &str, key: i8) -> String {
-    input
+    let uppercase_alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         .chars()
-        .for_each(|ch| {
-            
-        })
+        .enumerate();
+
+    let lowercase_alphabet = "abcdefghijklmnopqrstuvwxyz"
+        .chars()
+        .enumerate();
+    
+    let uppercase_map: HashMap<i8, char> = uppercase_alphabet
+        .iter()
+        .cloned()
+        .collect();
+    
+    let lowercase_map: HashMap<i8, char> = lowercase_alphabet
+        .iter()
+        .cloned()
+        .collect();
+    
+    String::new()
+
 }
