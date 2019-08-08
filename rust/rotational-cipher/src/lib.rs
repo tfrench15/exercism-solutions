@@ -4,8 +4,6 @@ pub fn rotate(input: &str, key: i8) -> String {
     const UPPERCASE: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const LOWERCASE: &str = "abcdefghijklmnopqrstuvwxyz";
 
-    
-
     let mut upper_char_to_idx = HashMap::new();
     let mut upper_idx_to_char = HashMap::new();
 
