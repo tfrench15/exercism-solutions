@@ -43,4 +43,3 @@ fn create_vec(row: usize, prev: &[u32]) -> Vec<u32> {
     vec.push(1);
     vec
 }
-
